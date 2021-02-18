@@ -5,6 +5,7 @@ This example showcases Next.js's [Static Generation](https://nextjs.org/docs/bas
 ## Demo
 
 ### [https://next-blog-wordpress.now.sh](https://next-blog-wordpress.now.sh)
+![Add new plugin](./docs/homepage-demo.png)
 
 ## Deploy your own
 
