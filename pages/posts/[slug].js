@@ -28,14 +28,6 @@ export default function Post({ wordpressPost, preview }) {
           <title>Next.js Blog Example with {CMS_NAME}</title>
         </Head>
         <Container>
-          {wordpressPost && (
-            <HeroPost
-              title={wordpressPost.title}
-              coverImage={wordpressPost.featuredImage}
-              slug={wordpressPost.slug}
-              excerpt={wordpressPost.content}
-            />
-          )}
           {router.isFallback ? (
           <PostTitle>Loading…</PostTitle>
         ) : (
@@ -52,19 +44,15 @@ export default function Post({ wordpressPost, preview }) {
               </Head>
               <PostHeader
                 title={wordpressPost.title}
-                coverImage={wordpressPost.featuredImage?.node}
+                coverImage={wordpressPost.featuredImage}
                 // date={wordpressPost.date}
                 // author={wordpressPost.author}
                 // categories={wordpressPost.categories}
               />
-              <PostBody content={post.content} />
-              <footer>
-                {post.tags.edges.length > 0 && <Tags tags={post.tags} />}
-              </footer>
+              <PostBody content={wordpressPost.content} />
             </article>
 
             <SectionSeparator />
-            {morePosts.length > 0 && <MoreStories posts={morePosts} />}
           </>
         )}
         </Container>
