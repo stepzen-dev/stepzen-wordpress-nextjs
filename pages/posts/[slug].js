@@ -7,44 +7,55 @@ import Header from '../../components/header'
 import PostHeader from '../../components/post-header'
 import SectionSeparator from '../../components/section-separator'
 import Layout from '../../components/layout'
-import { getAllPostsWithSlug, getPostAndMorePosts } from '../../lib/api'
+import { getAllPostsWithSlug, getPostAndMorePosts, getWPPost } from '../../lib/api'
 import PostTitle from '../../components/post-title'
 import Head from 'next/head'
 import { CMS_NAME } from '../../lib/constants'
 import Tags from '../../components/tags'
 
-export default function Post({ post, posts, preview }) {
+export default function Post({ wordpressPost, preview }) {
   const router = useRouter()
-  const morePosts = posts?.edges
+  // const morePosts = posts?.edges
 
-  if (!router.isFallback && !post?.slug) {
+  if (!router.isFallback && !wordpressPost?.slug) {
     return <ErrorPage statusCode={404} />
   }
 
   return (
-    <Layout preview={preview}>
-      <Container>
-        <Header />
-        {router.isFallback ? (
+    <>
+      <Layout preview={preview}>
+        <Head>
+          <title>Next.js Blog Example with {CMS_NAME}</title>
+        </Head>
+        <Container>
+          {wordpressPost && (
+            <HeroPost
+              title={wordpressPost.title}
+              coverImage={wordpressPost.featuredImage}
+              slug={wordpressPost.slug}
+              excerpt={wordpressPost.content}
+            />
+          )}
+          {router.isFallback ? (
           <PostTitle>Loading…</PostTitle>
         ) : (
           <>
             <article>
               <Head>
                 <title>
-                  {post.title} | Next.js Blog Example with {CMS_NAME}
+                  {wordpressPost.title} | Next.js Blog Example with {CMS_NAME}
                 </title>
                 <meta
                   property="og:image"
-                  content={post.featuredImage?.node?.sourceUrl}
+                  content={wordpressPost.featuredImage}
                 />
               </Head>
               <PostHeader
-                title={post.title}
-                coverImage={post.featuredImage?.node}
-                date={post.date}
-                author={post.author?.node}
-                categories={post.categories}
+                title={wordpressPost.title}
+                coverImage={wordpressPost.featuredImage?.node}
+                // date={wordpressPost.date}
+                // author={wordpressPost.author}
+                // categories={wordpressPost.categories}
               />
               <PostBody content={post.content} />
               <footer>
@@ -56,28 +67,23 @@ export default function Post({ post, posts, preview }) {
             {morePosts.length > 0 && <MoreStories posts={morePosts} />}
           </>
         )}
-      </Container>
-    </Layout>
+        </Container>
+      </Layout>
+    </>
   )
 }
 
-export async function getStaticProps({ params, preview = false, previewData }) {
-  const data = await getPostAndMorePosts(params.slug, preview, previewData)
-
+export async function getStaticProps({ preview = false, id }) {
+  const wordpressPost = await getWPPost(preview, id = 1)
   return {
-    props: {
-      preview,
-      post: data.post,
-      posts: data.posts,
-    },
+    props: { wordpressPost, preview, id },
   }
 }
 
 export async function getStaticPaths() {
-  const allPosts = await getAllPostsWithSlug()
-
+  const wordpressPosts = await getAllPostsWithSlug()
   return {
-    paths: allPosts.edges.map(({ node }) => `/posts/${node.slug}`) || [],
+    paths: wordpressPosts.map((node) => `/posts/${node.slug}`) || [],
     fallback: true,
   }
 }
