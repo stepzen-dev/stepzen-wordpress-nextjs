@@ -24,6 +24,18 @@ export default function Post({ wordpressPost, preview }) {
   return (
     <>
       <Layout preview={preview}>
+        <Head>
+          <title>Next.js Blog Example with {CMS_NAME}</title>
+        </Head>
+        <Container>
+          {wordpressPost && (
+            <HeroPost
+              title={wordpressPost.title}
+              coverImage={wordpressPost.featuredImage}
+              slug={wordpressPost.slug}
+              excerpt={wordpressPost.content}
+            />
+          )}
           {router.isFallback ? (
           <PostTitle>Loading…</PostTitle>
         ) : (
@@ -41,20 +53,21 @@ export default function Post({ wordpressPost, preview }) {
               <PostHeader
                 title={wordpressPost.title}
                 coverImage={wordpressPost.featuredImage?.node}
-                date="12-22-2020"
-                author="sam"
-                categories="bicycle"
+                // date={wordpressPost.date}
+                // author={wordpressPost.author}
+                // categories={wordpressPost.categories}
               />
-              <PostBody content={wordpressPost.content} />
-              {/* <footer>
+              <PostBody content={post.content} />
+              <footer>
                 {post.tags.edges.length > 0 && <Tags tags={post.tags} />}
-              </footer> */}
+              </footer>
             </article>
 
             <SectionSeparator />
-            {/* {morePosts.length > 0 && <MoreStories posts={morePosts} />} */}
+            {morePosts.length > 0 && <MoreStories posts={morePosts} />}
           </>
         )}
+        </Container>
       </Layout>
     </>
   )
