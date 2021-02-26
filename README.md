@@ -167,10 +167,7 @@ Your `.env.local` file should look like this:
 
 ```bash
 STEPZEN_API_URL=...
-
-# Only required if you want to enable preview mode
-# STEPZEN_AUTH_REFRESH_TOKEN=
-# STEPZEN_PREVIEW_SECRET=
+STEPZEN_AUTH_REFRESH_TOKEN=
 ```
 
 ### Step 4. Run Next.js in development mode
