@@ -7,8 +7,8 @@ import Layout from '../components/layout'
 import { getWPPost } from '../lib/api'
 import { CMS_NAME } from '../lib/constants'
 
-export default function Index({ post, preview }) {
-  console.log(post)
+export default function Index({ post, image, preview }) {
+  console.log(post.featuredImage)
   return (
     <>
       <Layout preview={preview}>
@@ -21,6 +21,7 @@ export default function Index({ post, preview }) {
             <HeroPost
               title={post.title}
               coverImage={post.featuredImage}
+              // coverImage={image.url}
               slug={post.slug}
               excerpt={post.content}
             />
@@ -31,13 +32,15 @@ export default function Index({ post, preview }) {
   )
 }
 
-export async function getStaticProps({ preview = false, id }) {
-  const wordpressPost = await getWPPost(preview, id = 1)
+export async function getStaticProps({ preview = false, id, slug }) {
+  const data = await getWPPost(preview, id = 1, slug="hello-world")
   return {
     props: { 
-      post: wordpressPost, 
+      post: data.wordpressPost, 
+      // image: data.cloudinaryImage, 
       preview, 
-      id 
+      id,
+      slug 
     },
   }
 }

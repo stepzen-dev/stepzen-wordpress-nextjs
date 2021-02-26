@@ -14,9 +14,9 @@ import { CMS_NAME, ENDPOINT_NAME } from '../../lib/constants'
 
 export default function Post({ post, postImage, posts, preview }) {
   const router = useRouter()
-  // const morePosts = posts?.edges
-  console.log(postImage)
-  console.log('all posts', posts)
+
+  // console.log('image', postImage)
+  // console.log('all posts', posts)
   
   if (!router.isFallback && !post[0]) {
     return <ErrorPage statusCode={404} />
@@ -37,12 +37,14 @@ export default function Post({ post, postImage, posts, preview }) {
                 </title>
                 <meta
                   property="og:image"
-                  content={postImage.url}
+                  coverImage={post[0].featuredImage}
+                  // content={postImage.url}
                 />
               </Head>
               <PostHeader
                 title={post[0].title}
-                coverImage={postImage.url}
+                coverImage={post[0].featuredImage}
+                // coverImage={postImage.url}
               />
               <PostBody content={post[0].content} />
             </article>
@@ -64,7 +66,7 @@ export async function getStaticProps({ params, preview = false, previewData }) {
     props: {
       preview,
       post: data.wordpressPostsBySlug,
-      postImage: data.cloudinaryImage,
+      // postImage: data.cloudinaryImage,
       posts: data.wordpressPosts,
     },
   }
