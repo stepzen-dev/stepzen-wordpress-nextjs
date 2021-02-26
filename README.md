@@ -1,6 +1,6 @@
-# A statically generated blog example using StepZen, Next.js and WordPress
+# A statically generated blog example using StepZen, Next.js, WordPress, and Cloudinary.
 
-This example showcases Next.js's [Static Generation](https://nextjs.org/docs/basic-features/pages) feature using [StepZen](https://stepzen.com) as the GraphQL data source and [WordPress](https://wordpress.org) as the CMS.
+This example showcases Next.js's [Static Generation](https://nextjs.org/docs/basic-features/pages) feature using [StepZen](https://stepzen.com) as the GraphQL data source and [WordPress](https://wordpress.org) as the CMS, and [Cloudinary](https://cloudinary.com/) for image hosting.
 
 ## Demo
 
@@ -11,15 +11,14 @@ This example showcases Next.js's [Static Generation](https://nextjs.org/docs/bas
 
 Once you have access to [the environment variables you'll need](#step-4-nextjs-configurations), deploy the example using [Vercel](https://vercel.com):
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/cms-wordpress&project-name=cms-wordpress&repository-name=cms-wordpress&env=STEPZEN_API_URL&envDescription=Required%20to%20connect%20the%20app%20with%20WordPress&envLink=https://vercel.link/cms-wordpress-env)
-
 ## How to use
 Table of Contents  
-1. Spin up wordpress environment
+1. Prepare your WordPress site
 2. Populate Content
 3. Import StepZen schemas
-4. Connect Nextjs to StepZen
-5. Add authentication to Wordpress Environment (optional)   
+4. Setting up Cloudinary or Wordpress FeaturedImages
+5. Connect Nextjs to StepZen
+6. Add authentication to Wordpress Environment (optional)   
 
 <hr/>
 
@@ -37,7 +36,7 @@ Once the site is ready, the two highly recommended plugins for a scalable wordpr
 
 - Once the plugin has been added, activate it from either the **Activate Plugin** button displayed after uploading or from the **Plugins** page.
 
-### Add the following code to `functions.php` in appearance > theme editor. If you choose not to add it, the front-end will fail and you will need to substitute the featuredImage data in the /pages/index.js and /lib/api.js files.
+#### Add the following code to `functions.php` in appearance > theme editor. If you choose not to add it, the front-end will fail and you will need to substitute the featuredImage data in the `/lib/api.js` file.
 
 ```bash
 // Expose featuredImage
@@ -62,29 +61,7 @@ function get_rest_featured_image( $object, $field_name, $request ) {
 add_action('rest_api_init', 'register_rest_images' );
 ```
 
-Expose ACF on the RestAPI (optional)
-```
-function create_ACF_meta_in_REST() {
-    $postypes_to_exclude = ['acf-field-group','acf-field'];
-    $extra_postypes_to_include = ["page", "post"];
-    $post_types = array_diff(get_post_types(["_builtin" => false], 'names'),$postypes_to_exclude);
-    array_push($post_types, $extra_postypes_to_include);
-    foreach ($post_types as $post_type) {
-        register_rest_field( $post_type, 'fields', [
-            'get_callback'    => 'expose_ACF_fields',
-            'schema'          => null,
-       ]
-     );
-    }
-}
-function expose_ACF_fields( $object ) {
-    $ID = $object['id'];
-    return get_fields($ID);
-}
-add_action( 'rest_api_init', 'create_ACF_meta_in_REST' );
-```
-
-> **Note:** After populating content, visit http://your_site.com/wp-json/wp/v2/pages/$id?_embed and `cmd+f` to ensure your `fields` and `featuredImage` are populating.
+> **Note:** After populating content, visit http://your_site.com/wp-json/wp/v2/pages/$id?_embed and `cmd+f` to ensure your `featuredImage` is populating.
 
 ### Step 2. Populate Content
 
@@ -92,8 +69,6 @@ Inside your WordPress admin, go to **Posts** and start adding new posts:
 
 - We recommend creating at least **2 posts**
 - Use dummy data for the content. 
-- Create custom fields or import `./acf-sample.json` preconfigured acf field group into your wordpress environment.  
-`https://your-site.com/wp-admin/edit.php?post_type=acf-field-group&page=acf-tools`
 - Pick an author from your WordPress users
 - Add a **Featured Image**. You can download one from [Unsplash](https://unsplash.com/)
 - Fill the **Excerpt** field
@@ -102,7 +77,7 @@ Inside your WordPress admin, go to **Posts** and start adding new posts:
 
 When you’re done, make sure to **Publish** the posts.
 
-> **Note:** Only **published** posts and public fields will be rendered by the app unless [Preview Mode](https://nextjs.org/docs/advanced-features/preview-mode) is enabled.
+> **Note:** Only **published** posts and public fields will be rendered.
 
 ### Step 3. StepZen Import
 
@@ -139,6 +114,27 @@ c. Start up your Stepzen server
 stepzen start
 ```
 
+Ensure the endpoint is properly quering from the Wordpress RestAPI
+
+```bash
+{
+  wordpressPages {
+    id
+    title
+    content
+    featuredImage
+    slug
+  }
+  wordpressPosts {
+    id
+    title
+    content
+    featuredImage
+    slug
+  }
+}
+```
+
 ### Step 4. Setting up Cloudinary or Wordpress FeaturedImages
 
 If you want to use FeaturedImages rather than Cloudinary Images, remove all the `cloudinaryImage` queries found in `/lib/api.js`.
@@ -146,7 +142,7 @@ If you want to use FeaturedImages rather than Cloudinary Images, remove all the 
 #### Adding Cloudinary Images
 1. Add all the images you want to feature on your pages with the slug of the matching post and page.  
 ```
-Post url - https://yoursite.com/post/hello-world
+Wordpress Post or Page url - https://yoursite.com/post/hello-world
 Cloudinary Image Name (PublicId) - hello-world
 ```
 2. Uncomment the `cloudinaryImage` data found on `index.js` and `[slug].js` for `getStaticProps` and `coverImage`.
