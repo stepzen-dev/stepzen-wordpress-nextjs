@@ -60,8 +60,10 @@ function get_rest_featured_image( $object, $field_name, $request ) {
 }
 
 add_action('rest_api_init', 'register_rest_images' );
+```
 
-// Expose Page and Post types on the RestAPI
+Expose ACF on the RestAPI (optional)
+```
 function create_ACF_meta_in_REST() {
     $postypes_to_exclude = ['acf-field-group','acf-field'];
     $extra_postypes_to_include = ["page", "post"];
@@ -102,63 +104,31 @@ When you’re done, make sure to **Publish** the posts.
 
 > **Note:** Only **published** posts and public fields will be rendered by the app unless [Preview Mode](https://nextjs.org/docs/advanced-features/preview-mode) is enabled.
 
-### Step 4. StepZen Import
+### Step 3. StepZen Import
 
-a. Import the wordpress schema with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
+a. Import the wordpress schema.  This should confirm that the StepZen CLI is running the schema on `localhost:5000`.
 
 ```bash
+npm install -g stepzen
 mkdir wp-stepzen
 cd wp-stepzen
-stepzen import wordpress
-# The auth configurations are optional. Press [Enter] to skip through for now.
+stepzen import wordpress cloudinary
+# Add the auth configs for cloudinary. You can also add the configs later in your config.yaml
+# The auth configurations are optional for wordpress. Press [Enter] to skip through those for now.
 ```
-b. Replace the `wordpress.graphql` with the following schema.
+b. The index.graphql SDL should look like this. 
 
 ```bash
-interface Page {
-    id: ID!
-    title: String!
-    content: String!
-    slug: String
-    featuredImage: String
-    # yoast
-    # yoastHeader: String
-}
-type WordpressPage implements Page {}
-interface WPPost {
-    id: ID!
-    title: String!
-    content: String!
-    slug: String
-    featuredImage: String
-    yoastHeader: String
-}
-type WordpressPost implements WPPost {}
-type Query {
-    page (id: ID!): Page
-    wordpressPage (id: ID!): WordpressPage
-        @supplies (query: "page")
-        @rest (
-             setters: [
-                {field: "title", path: "title.rendered"},
-                {field: "content", path: "content.rendered"},
-                {field: "yoastHeader", path: "yoast_head"}
-            ]
-            resultroot: ""
-            endpoint: 
-            "http://your_site.com/wp-json/wp/v2/pages/$id?_embed")
-    wppost (id: ID!): WPPost
-    wordpressPost (id: ID!): WordpressPost
-        @supplies (query: "wppost")
-        @rest (
-             setters: [
-                {field: "title", path: "title.rendered"},
-                {field: "content", path: "content.rendered"},
-                {field: "yoastHeader", path: "yoast_head"}
-            ]
-            resultroot: ""
-            endpoint: 
-            "http://your_site.com/wp-json/wp/v2/posts/$id?_embed")
+schema
+  @sdl(
+    files: [
+      "wordpress/posts.graphql"
+      "wordpress/pages.graphql"
+      # If you don't want to include cloudinary, comment it out.
+      "cloudinary/cloudinary.graphql"
+    ]
+  ) {
+  query: Query
 }
 ```
 
@@ -169,7 +139,21 @@ c. Start up your Stepzen server
 stepzen start
 ```
 
-### Step 4. Nextjs Configurations
+### Step 4. Setting up Cloudinary or Wordpress FeaturedImages
+
+If you want to use FeaturedImages rather than Cloudinary Images, remove all the `cloudinaryImage` queries found in `/lib/api.js`.
+
+#### Adding Cloudinary Images
+1. Add all the images you want to feature on your pages with the slug of the matching post and page.  
+```
+Post url - https://yoursite.com/post/hello-world
+Cloudinary Image Name (PublicId) - hello-world
+```
+2. Uncomment the `cloudinaryImage` data found on `index.js` and `[slug].js` for `getStaticProps` and `coverImage`.
+3. Delete `{post.featuredImage}` found on `index.js` and `[slug].js`.
+4. Save the project. 
+
+### Step 5. Nextjs Configurations
 
 Copy the `.env.local.example` file in this directory to `.env.local` (which will be ignored by Git):
 
@@ -187,6 +171,7 @@ STEPZEN_API_URL=...
 # Only required if you want to enable preview mode
 # STEPZEN_AUTH_REFRESH_TOKEN=
 # STEPZEN_PREVIEW_SECRET=
+```
 
 ### Step 4. Run Next.js in development mode
 
