@@ -1,6 +1,6 @@
 # A statically generated blog example using StepZen, Next.js, WordPress, and Cloudinary.
 
-This example showcases Next.js's [Static Generation](https://nextjs.org/docs/basic-features/pages) feature using [StepZen](https://stepzen.com) as the GraphQL data source and [WordPress](https://wordpress.org) as the CMS, and [Cloudinary](https://cloudinary.com/) for image hosting.
+This example showcases Next.js's [Static Generation](https://nextjs.org/docs/basic-features/pages) feature using [StepZen](https://stepzen.com) as the GraphQL data source, [WordPress](https://wordpress.org) as the CMS, and [Cloudinary](https://cloudinary.com/) for image hosting.
 
 ## Demo
 
