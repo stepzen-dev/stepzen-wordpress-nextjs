@@ -1,0 +1,10 @@
+schema
+  @sdl(
+    files: [
+      "wordpress/posts.graphql"
+      "wordpress/pages.graphql"
+      "cloudinary/cloudinary.graphql"
+    ]
+  ) {
+  query: Query
+}
