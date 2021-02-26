@@ -61,7 +61,7 @@ function get_rest_featured_image( $object, $field_name, $request ) {
 add_action('rest_api_init', 'register_rest_images' );
 ```
 
-> **Note:** After populating content, visit http://your_site.com/wp-json/wp/v2/pages/$id?_embed and `cmd+f` to ensure your `featuredImage` is populating.
+> **Note:** After populating content, visit http://your_site.com/wp-json/wp/v2/pages/ and `cmd+f` to ensure your `featuredImage` is populating.
 
 ### Step 2. Populate Content
 
