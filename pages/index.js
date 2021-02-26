@@ -8,7 +8,7 @@ import { getWPPost } from '../lib/api'
 import { CMS_NAME } from '../lib/constants'
 
 export default function Index({ post, image, preview }) {
-  console.log(post.featuredImage)
+
   return (
     <>
       <Layout preview={preview}>
