@@ -1,0 +1,46 @@
+query stepzen {
+    wordpressPages {
+    id
+    title
+    content
+    featuredImage
+    slug
+  }
+  wordpressPage(id: 2) {
+    id
+    title
+    content
+    featuredImage
+    slug
+  }
+  wordpressPosts {
+    id
+    title
+    content
+    featuredImage
+    slug
+  }
+  wordpressPost(id: 1) {
+    id
+    title
+    content
+    featuredImage
+    slug
+  }
+  wordpressPostsBySlug(slug: "hello-world") {
+    id
+    title
+    content
+    featuredImage
+    slug
+  }
+  cloudinaryImage(publicId: "hello-world") {
+  url
+    assetId
+    publicId
+    format
+    bytes
+    height
+    width
+  }
+}
